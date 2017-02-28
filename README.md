@@ -2,7 +2,7 @@
 # upver
 
 <!--[]-->
-> Updates the version number inside a list of files with a supplied version number.
+> Updates the version string within a list of files with a new version string.
 
 This module can be used with [corp-semantic-release](https://github.com/leonardoanalista/corp-semantic-release) to 
 update the version number in a list of files when the package's version number is changed. See [Usage](#usage)
@@ -23,7 +23,7 @@ update the version number in a list of files when the package's version number i
 ## Install
 
 1. `npm install upver`
-2. Create a YAML configuration file with this format (note the use of `<@VERSION@>` to act as the new version placeholder):
+2. Create a YAML configuration file with this format (Note the `<@VERSION@>` placeholder for the new version string):
   ```yaml
   - file: path/to/file/relative/to/project/root.yml
     search: Regex search for, e.g.: '"version": (".+")'
@@ -64,7 +64,7 @@ In the following example, `upver` does *NOT* receive the version as an argument 
 
 
 <details>
-<summary>Option 2 - Use with corp-semantic-release</summary>
+<summary>Option 2 - Use with `corp-semantic-release`</summary>
 `corp-semantic-release` provides a `--pre-commit <NPM script>` option. `upver` is passed the version 
 number as an argument to the script.
 
