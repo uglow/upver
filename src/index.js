@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 
-const fs = require('fs');
-const APP_ROOT = require('app-root-path').path;
+// The packages that use 'let' instead of 'const' are stubbed in the unit tests using rewire()
+let fs = require('fs');
+const appRoot = process.cwd();
 const path = require('path');
 const readYaml = require('read-yaml');
+let execSync = require('child_process').execSync;
 
-const verRegEx = /^\d+\.\d+\.\d+$/;
+const verRegEx = /^\d+\.\d+\.\d+.*$/;
 const REPLACE_TOKEN = '<@VERSION@>';
 
 module.exports = {
@@ -22,7 +24,7 @@ let pkgCache;
 
 function getPackageData() {
   if (!pkgCache) {
-    pkgCache = require(path.join(APP_ROOT, '/package.json'));   // Find the root package
+    pkgCache = require(`${appRoot}/package.json`);   // Find the root package
   }
   return pkgCache;
 }
@@ -59,7 +61,7 @@ function updateFiles(configData, version, writeChanges) {
 
   // Patch the files
   configData.forEach((config) => {
-    let fileName = path.join(APP_ROOT, config.file);
+    let fileName = path.join(appRoot, config.file);
     let text = fs.readFileSync(fileName, 'utf8');
     let regEx = new RegExp(config.search, 'gm');
 
@@ -67,6 +69,7 @@ function updateFiles(configData, version, writeChanges) {
 
     if (writeChanges) {
       fs.writeFileSync(fileName, text, 'utf8');
+      execSync(`git add ${config.file}`);
       console.log(`[upver]: Updated version in ${config.file}`);
     } else {
       console.info(`[upver]: Updated version in ${config.file}:`);

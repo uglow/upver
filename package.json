@@ -1,7 +1,7 @@
 {
   "name": "upver",
   "version": "0.0.0-development",
-  "description": "Updates the version number inside a list of files with a supplied version number.",
+  "description": "Updates the version string within a list of files with a new version string, and `git add`s the changed files.",
   "license": "MIT",
   "files": [
     "src",
@@ -43,7 +43,6 @@
     }
   },
   "dependencies": {
-    "app-root-path": "2.0.1",
     "read-yaml": "1.0.0"
   },
   "devDependencies": {

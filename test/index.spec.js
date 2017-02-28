@@ -47,6 +47,15 @@ describe('upver', () => {
 
       assert.throws(() => module.getVersionNumber('foo'), /Error: A version number was not supplied and is not present in package\.json\./);
     });
+
+    it('should throw an error if the version number in package.json and the argument is not valid', () => {
+      module.__set__({
+        getPackageData: () => ({version: '1.2.3-development'}),
+      });
+
+      let result = module.getVersionNumber();
+      assert.equal(result, '1.2.3-development');
+    });
   });
 
 
@@ -102,7 +111,7 @@ describe('upver', () => {
       });
     });
 
-    it('should update the files correctly', () => {
+    it('should fake-update the files correctly (when writeChanges is false)', () => {
       const MOCK_VERSION = '4.7.0';
       const writeChanges = false;
       const configData = module.getConfigFileData('test/fixtures/valid-config.yml');
@@ -119,6 +128,37 @@ describe('upver', () => {
       assert.equal(output[4], '[upver]: Updated version in test/fixtures/b.json:\n');
       assert.equal(output[5], '{\n  "foo": "bar",\n  "version": "4.7.0",\n  "bar": "car"\n}\n\n');
       assert.equal(output[6], '---------------\n');
+    });
+
+
+    it('should update the files correctly and add them to git (when writeChanges is true)', () => {
+      const MOCK_VERSION = '4.7.0';
+      const writeChanges = true;
+      const configData = module.getConfigFileData('test/fixtures/valid-config.yml');
+      const stdout = require('test-console').stdout;
+      let writeFileCallCount = 0;
+      let gitCommands = [];
+
+      module.__set__({
+        fs: {
+          readFileSync: require('fs').readFileSync,
+          writeFileSync: () => writeFileCallCount++,
+        },
+        execSync: (cmdStr) => gitCommands.push(cmdStr),
+      });
+
+      let output = stdout.inspectSync(() => {
+        module.updateFiles(configData, MOCK_VERSION, writeChanges);
+      });
+
+      assert.equal(configData.length, writeFileCallCount);
+
+      assert.equal(output[0], '[upver]: Latest version of test-upver: 4.7.0\n');
+      assert.equal(output[1], '[upver]: Updated version in test/fixtures/a.txt\n');
+      assert.equal(output[2], '[upver]: Updated version in test/fixtures/b.json\n');
+
+      assert.equal(gitCommands[0], 'git add test/fixtures/a.txt');
+      assert.equal(gitCommands[1], 'git add test/fixtures/b.json');
     });
   });
 });
