@@ -1,0 +1,8 @@
+- file: test/fixtures/a.txt
+  search: VERSION = (.*);$
+  replacement: VERSION = <@VERSION@>;
+
+- file: test/fixtures/b.json
+  search: '"version": (".+")'
+  replacement: '"version": "<@VERSION@>"'
+
