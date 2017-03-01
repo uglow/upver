@@ -1,6 +1,6 @@
 {
   "name": "upver",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "Updates the version string within a list of files with a new version string, and `git add`s the changed files.",
   "license": "MIT",
   "files": [
