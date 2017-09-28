@@ -103,6 +103,22 @@ Example:
 ```
 </details>
 
+## Testing
+Assuming the following NPM script:
+```bash
+"scripts": {
+  "updateFiles": "upver"
+}
+```
+... use the following command to test that everything works:
+
+```bash
+npm run updateFiles -- 1.2.3
+```
+Note that `1.2.3` can be any version number string that matches this regular expression: `/^\d+\.\d+\.\d+.*$`. This means `foo` and `1.2.non-digit` is
+invalid, but `13312321.2312323.24323434-awsome-tag-name` is valid.
+
+
 
 <!--[RM_CONTRIBUTING]-->
 ## Contributing
